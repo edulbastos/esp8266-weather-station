@@ -2,6 +2,8 @@
 
 A weather station based on ESP8266 with SSD1306 OLED display, DHT22 sensor, and OpenWeatherMap API integration.
 
+![Weather Station](IMG_0303.jpeg)
+
 ## Features
 
 - **SSD1306 OLED Display** (128x64) connected via I2C (SDA=GPIO12, SCL=GPIO14)
