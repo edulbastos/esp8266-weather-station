@@ -17,8 +17,7 @@ A weather station based on ESP8266 with SSD1306 OLED display, DHT22 sensor, and 
 
 - ESP8266 (NodeMCU, Wemos D1 Mini, etc.)
 - SSD1306 OLED Display 128x64 (I2C)
-- DHT22 Sensor (AM2302)
-- 10kΩ pull-up resistor for DHT22 (if not included in module)
+- DHT22 Sensor Module (AM2302) with built-in pull-up resistor
 
 ## Wiring
 
@@ -144,7 +143,7 @@ After flashing and booting:
 
 ### DHT22 not reading data
 - Check data pin connection
-- Ensure 10kΩ pull-up resistor is present
+- Verify module has built-in pull-up resistor
 - Wait 2 seconds after boot for stabilization
 
 ### No weather data
@@ -211,7 +210,7 @@ esp8266_weather_oled/
 
 ## License
 
-This project is provided as-is, without warranties.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
