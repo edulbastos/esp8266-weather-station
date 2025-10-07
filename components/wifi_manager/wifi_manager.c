@@ -29,34 +29,66 @@ static bool s_is_connected = false;
 static void event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
 {
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
-        esp_wifi_connect();
-    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        s_is_connected = false;
-        if (s_retry_num < CONFIG_WIFI_MAXIMUM_RETRY) {
-            esp_wifi_connect();
-            s_retry_num++;
-            ESP_LOGI(TAG, "Retry to connect to the AP");
-        } else {
-            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+    if (event_base == WIFI_EVENT) {
+        switch (event_id) {
+            case WIFI_EVENT_STA_START:
+                ESP_LOGI(TAG, "WiFi station started");
+                esp_wifi_connect();
+                break;
+
+            case WIFI_EVENT_STA_DISCONNECTED:
+                s_is_connected = false;
+                if (s_retry_num < CONFIG_WIFI_MAXIMUM_RETRY) {
+                    esp_wifi_connect();
+                    s_retry_num++;
+                    ESP_LOGI(TAG, "Retry to connect to the AP (attempt %d/%d)",
+                             s_retry_num, CONFIG_WIFI_MAXIMUM_RETRY);
+                } else {
+                    xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+                    ESP_LOGE(TAG, "Failed to connect to the AP after %d attempts",
+                             CONFIG_WIFI_MAXIMUM_RETRY);
+                }
+                break;
+
+            case WIFI_EVENT_STA_CONNECTED:
+                ESP_LOGI(TAG, "Connected to AP, waiting for IP address");
+                break;
+
+            default:
+                ESP_LOGW(TAG, "Unhandled WiFi event: %d", event_id);
+                break;
         }
-        ESP_LOGI(TAG,"Connect to the AP fail");
-    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG, "Got IP:" IPSTR, IP2STR(&event->ip_info.ip));
-        
-        // Configure Google DNS servers (8.8.8.8 and 8.8.4.4) for faster name resolution
-        ip_addr_t dns_primary;
-        ip_addr_t dns_secondary;
-        IP4_ADDR(&dns_primary, 8, 8, 8, 8);
-        IP4_ADDR(&dns_secondary, 8, 8, 4, 4);
-        dns_setserver(0, &dns_primary);
-        dns_setserver(1, &dns_secondary);
-        ESP_LOGI(TAG, "DNS servers configured: 8.8.8.8 and 8.8.4.4");
-        
-        s_retry_num = 0;
-        s_is_connected = true;
-        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+    }
+    else if (event_base == IP_EVENT) {
+        switch (event_id) {
+            case IP_EVENT_STA_GOT_IP:
+            {
+                ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+                ESP_LOGI(TAG, "Got IP:" IPSTR, IP2STR(&event->ip_info.ip));
+
+                // Configure Google DNS servers (8.8.8.8 and 8.8.4.4) for faster name resolution
+                ip_addr_t dns_primary;
+                ip_addr_t dns_secondary;
+                IP4_ADDR(&dns_primary, 8, 8, 8, 8);
+                IP4_ADDR(&dns_secondary, 8, 8, 4, 4);
+                dns_setserver(0, &dns_primary);
+                dns_setserver(1, &dns_secondary);
+                ESP_LOGI(TAG, "DNS servers configured: 8.8.8.8 and 8.8.4.4");
+
+                s_retry_num = 0;
+                s_is_connected = true;
+                xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+                break;
+            }
+
+            case IP_EVENT_STA_LOST_IP:
+                ESP_LOGW(TAG, "Lost IP address");
+                break;
+
+            default:
+                ESP_LOGW(TAG, "Unhandled IP event: %d", event_id);
+                break;
+        }
     }
 }
 
