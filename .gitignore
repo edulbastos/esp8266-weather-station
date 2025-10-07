@@ -1,0 +1,49 @@
+# Build files
+build/
+*.o
+*.a
+*.bin
+*.elf
+*.map
+
+# SDK configuration files (contain sensitive data like WiFi credentials and API keys)
+sdkconfig
+sdkconfig.old
+
+# Documentation directory
+docs/
+
+# Scripts
+*.sh
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Dependencies
+dependencies/
+managed_components/
+
+# Configuration files (contains sensitive data)
+project_config.txt
+
+# Backup files
+*.bak
+*.backup
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp

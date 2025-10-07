@@ -1,0 +1,113 @@
+menu "Weather Station Configuration"
+
+    menu "WiFi Configuration"
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "myssid"
+            help
+                SSID (network name) for the ESP8266 to connect to.
+
+        config WIFI_PASSWORD
+            string "WiFi Password"
+            default "mypassword"
+            help
+                WiFi password (WPA or WPA2) for the ESP8266 to use.
+
+        config WIFI_MAXIMUM_RETRY
+            int "Maximum retry attempts"
+            default 5
+            help
+                Set the maximum retry attempts to connect to WiFi.
+    endmenu
+
+    menu "OpenWeatherMap API Configuration"
+        config OWM_API_KEY
+            string "OpenWeatherMap API Key"
+            default "your_api_key_here"
+            help
+                Your OpenWeatherMap API key. Get one free at https://openweathermap.org/api
+
+        config OWM_CITY
+            string "City name"
+            default "Sao Paulo"
+            help
+                City name for weather forecast (e.g., "Sao Paulo", "London", "New York")
+
+        config OWM_COUNTRY_CODE
+            string "Country code"
+            default "BR"
+            help
+                ISO 3166 country code (e.g., "BR" for Brazil, "US" for United States)
+
+        config OWM_UPDATE_INTERVAL
+            int "Weather update interval (minutes)"
+            default 30
+            range 10 120
+            help
+                Interval in minutes to update weather information from OpenWeatherMap API.
+    endmenu
+
+    menu "Time Configuration"
+        config NTP_SERVER
+            string "NTP Server"
+            default "pool.ntp.org"
+            help
+                NTP server to synchronize time.
+
+        config TIMEZONE
+            string "Timezone"
+            default "UTC+3"
+            help
+                Timezone offset (e.g., "UTC-3" for Brazil/Brasilia, "UTC+0" for London)
+        
+        config TIME_UPDATE_INTERVAL
+            int "Time sync interval (hours)"
+            default 24
+            range 1 168
+            help
+                Interval in hours to resync time with NTP server.
+    endmenu
+
+    menu "DHT22 Sensor Configuration"
+        config DHT22_GPIO
+            int "DHT22 GPIO Pin"
+            default 4
+            help
+                GPIO pin connected to DHT22 sensor data pin.
+
+        config DHT22_READ_INTERVAL
+            int "DHT22 read interval (seconds)"
+            default 60
+            range 2 300
+            help
+                Interval in seconds to read DHT22 sensor data.
+    endmenu
+
+    menu "Display Configuration"
+        config SSD1306_SDA_GPIO
+            int "SSD1306 SDA GPIO Pin"
+            default 12
+            help
+                GPIO pin for I2C SDA (data line) for SSD1306 OLED display.
+
+        config SSD1306_SCL_GPIO
+            int "SSD1306 SCL GPIO Pin"
+            default 14
+            help
+                GPIO pin for I2C SCL (clock line) for SSD1306 OLED display.
+
+        config SSD1306_I2C_ADDR
+            hex "SSD1306 I2C Address"
+            default 0x3C
+            help
+                I2C address of SSD1306 display (usually 0x3C or 0x3D).
+
+        config DISPLAY_UPDATE_INTERVAL
+            int "Display update interval (seconds)"
+            default 5
+            range 1 60
+            help
+                Interval in seconds to update the display.
+    endmenu
+
+endmenu
